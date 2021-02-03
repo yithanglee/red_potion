@@ -31,15 +31,16 @@ defmodule Mix.Tasks.Rel do
     res = File.exists?(prod_secret)
     IO.puts("prod secret there? #{res}")
 
-    if project |> Map.keys() != [] do
+    if project != nil do
       rel_task_ex = File.cwd!() <> "/lib/#{project.alias_name}" <> "/release_task.ex"
       res = File.exists?(prod_secret)
       IO.puts("rel_task_ex there? #{res}")
+      app_dir = Application.app_dir(:red_potion)
 
       file =
         Mix.Generator.create_file(
           rel_task_ex,
-          EEx.eval_file("priv/templates/release_task.ex", project: project)
+          EEx.eval_file("#{app_dir}/priv/templates/release_task.ex", project: project)
         )
     end
 
