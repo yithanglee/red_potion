@@ -22,6 +22,7 @@ defmodule Mix.Tasks.Rel do
     Enum.each(@start_apps, &Application.ensure_all_started/1)
     IO.puts("initiating..2.")
     server_url = Application.get_env(:red_potion, :server_url)
+    project = Application.get_env(:red_potion, :project)
     # if iex_running?(), do: [], else: ["--no-halt"]
     IO.puts("releasing to...#{server_url}")
 
@@ -29,34 +30,50 @@ defmodule Mix.Tasks.Rel do
 
     res = File.exists?(prod_secret)
     IO.puts("prod secret there? #{res}")
-    result = Porcelain.shell("mix distillery.init ")
-    IO.inspect(result)
 
-    rel_folder = File.cwd!() <> "/rel/commands"
-    res = File.exists?(rel_folder)
+    if project |> Map.keys() != [] do
+      rel_task_ex = File.cwd!() <> "/lib/#{project.alias_name}" <> "/release_task.ex"
+      res = File.exists?(prod_secret)
+      IO.puts("rel_task_ex there? #{res}")
 
-    if res == false do
-      File.mkdir(rel_folder)
+      file =
+        Mix.Generator.create_file(
+          rel_task_ex,
+          EEx.eval_file("priv/templates/release_task.ex", project: project)
+        )
     end
 
-    migrate_sh = File.cwd!() <> "/rel/commands/migrate.sh"
-    res = File.exists?(migrate_sh)
+    # result = Porcelain.shell("mix distillery.init ")
+    # IO.inspect(result)
 
-    if res == false do
-      File.touch(migrate_sh)
-    end
+    # rel_folder = File.cwd!() <> "/rel/commands"
+    # res = File.exists?(rel_folder)
 
-    if res do
-      IO.puts("releasing for production...")
-      result = Porcelain.shell("MIX_ENV=prod mix distillery.release ")
-    else
-      IO.puts("please check your production release, esp prod secret")
-    end
+    # if res == false do
+    #   File.mkdir(rel_folder)
+    # end
+
+    # migrate_sh = File.cwd!() <> "/rel/commands/migrate.sh"
+    # res = File.exists?(migrate_sh)
+
+    # if res == false do
+    #   File.touch(migrate_sh)
+    # end
+
+    # if res do
+    #   IO.puts("releasing for production...")
+    #   result = Porcelain.shell("MIX_ENV=prod mix distillery.release ")
+    # else
+    #   IO.puts("please check your production release, esp prod secret")
+    # end
 
     []
   end
 
   defp iex_running? do
     Code.ensure_loaded?(IEx) and IEx.started?()
+  end
+
+  defp write_migrate_sh() do
   end
 end
