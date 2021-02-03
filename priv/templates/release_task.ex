@@ -5,10 +5,7 @@ defmodule <%= project.name %>.ReleaseTasks do
     :postgrex,
     :ecto
   ]
-
-
-
-  def repos, do: Application.get_env(lha(), :ecto_repos, [])
+  def repos, do: Application.get_env(<%= inspect String.to_atom(project.alias_name ) %> , :ecto_repos, [])
 
   def seed do
     me = <%= inspect String.to_atom(project.alias_name ) %> 
