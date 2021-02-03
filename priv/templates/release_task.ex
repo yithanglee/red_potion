@@ -1,4 +1,4 @@
-defmodule <%= @project.name %>.ReleaseTasks do
+defmodule <%= project.name %>.ReleaseTasks do
   @start_apps [
     :crypto,
     :ssl,
@@ -11,7 +11,7 @@ defmodule <%= @project.name %>.ReleaseTasks do
   def repos, do: Application.get_env(lha(), :ecto_repos, [])
 
   def seed do
-    me = <%= String.to_atom(@project.name ) %> 
+    me = <%= inspect String.to_atom(project.alias_name ) %> 
 
     IO.puts("Loading #{me}..")
     # Load the code for myapp, but don't start it
