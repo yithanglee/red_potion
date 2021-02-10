@@ -35,7 +35,7 @@ defmodule Mix.Tasks.Ssl do
 
     if res do
       {:ok, bin} = File.read(endpoint_ex)
-      new_bin = String.replace(bin, "robots.txt", "robots.txt .well-known)")
+      new_bin = String.replace(bin, "robots.txt", "robots.txt .well-known")
 
       File.write(endpoint_ex, new_bin)
       File.mkdir(well_kwown_path)
@@ -124,7 +124,7 @@ defmodule Mix.Tasks.Ssl do
       Porcelain.shell(
         "sshpass -p #{server.key} scp #{letsencrypt_ini} #{server.username}@#{server.url}:/home/#{
           server.username
-        }"
+        }/"
       )
 
     IO.puts(result.out)
