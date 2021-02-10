@@ -104,7 +104,7 @@ defmodule Mix.Tasks.Ssl do
       Porcelain.shell(
         "sshpass -p #{server.key} scp #{certbot_sh} #{server.username}@#{server.url}:/home/#{
           server.username
-        }"
+        }/"
       )
 
     IO.puts(result.out)
