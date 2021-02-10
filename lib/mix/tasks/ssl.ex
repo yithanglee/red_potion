@@ -27,7 +27,7 @@ defmodule Mix.Tasks.Ssl do
     server = Application.get_env(:red_potion, :server)
     project = Application.get_env(:red_potion, :project)
     app_dir = Application.app_dir(:red_potion)
-
+    well_kwown_path = File.cwd!() <> "/priv/static/.well-known/"
     endpoint_ex = File.cwd!() <> "/lib/#{project.alias_name}_web/endpoint.ex"
     res = File.exists?(endpoint_ex)
 
@@ -35,9 +35,10 @@ defmodule Mix.Tasks.Ssl do
 
     if res do
       {:ok, bin} = File.read(endpoint_ex)
-      new_bin = String.replace(bin, "robots.txt)", "robots.txt .well-known)")
+      new_bin = String.replace(bin, "robots.txt", "robots.txt .well-known)")
 
       File.write(endpoint_ex, new_bin)
+      File.mkdir(well_kwown_path)
     end
 
     prod_ex = File.cwd!() <> "/config/prod.exs"
@@ -65,11 +66,11 @@ defmodule Mix.Tasks.Ssl do
           bin,
           "# new host\nconfig :#{project.alias_name}, #{project.name}Web.Endpoint,\n  url: [host: \"#{
             server.domain_name
-          }\", port: 80],\n  http: [port: 80],\n  force_ssl: [hsts: true],\n  https: [\n  port: 443,\n  opt_app: :#{
+          }\", port: 80],\n  http: [port: 80],\n  force_ssl: [hsts: true],\n  https: [\n  port: 443,\n  otp_app: :#{
             project.alias_name
           },\n  keyfile: \"/etc/letsencrypt/live/#{server.domain_name}/privkey.pem\",\n  cacertfile: \"/etc/letsencrypt/live/#{
             server.domain_name
-          }/fullchain.pem\",\n  cacertfile: \"/etc/letsencrypt/live/#{server.domain_name}/cert.pem\"],\n  check_origin: [\"https://#{
+          }/fullchain.pem\",\n  certfile: \"/etc/letsencrypt/live/#{server.domain_name}/cert.pem\"],\n  check_origin: [\"https://#{
             server.domain_name
           }\"]\n# end new host"
         )
