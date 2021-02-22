@@ -17,3 +17,19 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
+
+
+inventory modu
+warehouse management - similar to swc
+
+
+
+[] locations - warehouses, shops, etc
+[] products - SKUs , updates the inventory level here....
+[] stock movements - to justify its current inventory level, with locations, and support document references
+[] purchase orders - targeting suppliers
+[] stock receive notes (aka receiving) 
+[] supplier_product - middle table
+
+[] create a stock order request - list all the stock that needs to be order
+[] stock order request - all the PO is inside this SOR
