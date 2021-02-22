@@ -1,0 +1,49 @@
+<h2>Listing Role menus</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Menu</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for role_menu <- @role_menus do %>
+    <tr>
+      <td><%= role_menu.role_id %></td>
+      <td><%= role_menu.menu_id %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: Routes.role_menu_path(@conn, :show, role_menu), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: Routes.role_menu_path(@conn, :edit, role_menu), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: Routes.role_menu_path(@conn, :delete, role_menu), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Role menu", to: Routes.role_menu_path(@conn, :new) %></span>
+
+<script type="text/javascript">
+   var role_menuDataSources = {}
+    role_menuSource = new dataSource("role_menus", {}, [], [
+    {"label": "Role" , "data": "role_id"},
+    {"label": "Menu" , "data": "menu_id"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Role menu", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+    role_menuDataSources["role_menus"] = role_menuSource
+
+</script>

@@ -1,0 +1,55 @@
+<h2>Listing Menus</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Link</th>
+      <th>Icon</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for menu <- @menus do %>
+    <tr>
+      <td><%= menu.name %></td>
+      <td><%= menu.category %></td>
+      <td><%= menu.link %></td>
+      <td><%= menu.icon %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: Routes.menu_path(@conn, :show, menu), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: Routes.menu_path(@conn, :edit, menu), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: Routes.menu_path(@conn, :delete, menu), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Menu", to: Routes.menu_path(@conn, :new) %></span>
+
+<script type="text/javascript">
+   var menuDataSources = {}
+    menuSource = new dataSource("menus", {}, [], [
+    {"label": "Name" , "data": "name"},
+    {"label": "Category" , "data": "category"},
+    {"label": "Link" , "data": "link"},
+    {"label": "Icon" , "data": "icon"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Menu", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+    menuDataSources["menus"] = menuSource
+
+</script>

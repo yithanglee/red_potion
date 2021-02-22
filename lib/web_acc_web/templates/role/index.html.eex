@@ -1,0 +1,50 @@
+<h2>Listing Roles</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for role <- @roles do %>
+    <tr>
+      <td><%= role.name %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: Routes.role_path(@conn, :show, role), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: Routes.role_path(@conn, :edit, role), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: Routes.role_path(@conn, :delete, role), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Role", to: Routes.role_path(@conn, :new) %></span>
+
+<script type="text/javascript">
+   var roleDataSources = {}
+    roleSource = new dataSource("roles", {}, [], [
+    {"label": "Name" , "data": "name"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Role", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+
+    roleSource.buttons = [{
+      iconName: "create", color: "warning", onClickFunction: editData, fnParams: { selector: "#myTable1", link:  "roles", customCols: null,  module: "Role"}
+    }]
+
+    dataSources["roles"] = roleSource
+
+</script>

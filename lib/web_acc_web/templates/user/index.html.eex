@@ -1,0 +1,233 @@
+
+
+
+
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link7">
+    <div class="row dt">
+      <div class="col-lg-12" id="userDt">
+      </div>
+    </div>
+    <div class="row excel" style="display: none;">
+        <div class="col-lg-12" id="spreadsheet">
+          
+        </div>
+        <div class="col-lg-1" >
+            <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+        </div>
+        <div class="col-lg-1" >
+            <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // belongs to form
+  // show all child
+  // many to many show
+  // many to many insert/update
+  var userDataSources = {}
+  userSubSource = new dataSource("users", {}, ['id', 'name', 'username', 'password', 'role', {
+    label: 'role_id',
+    selection: [{
+      id: 0,
+      name: "New"
+    }]
+  }], [{
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Username",
+      "data": "username"
+    },
+    {
+      "label": "Role",
+      "data": "role_id"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#subTable", [], [], "User", [])
+
+
+  rolemenuSource = new dataSource("role_menus", {}, null, [
+    {label: "Role", data: "role_id"},
+    {label: "Access", data: "menu_id"},
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#subTable", [], [], "RoleMenu", [])
+
+
+
+  menuSource = new dataSource("menus", {}, null, [{
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Category",
+      "data": "category"
+    },
+    {
+      "label": "Link",
+      "data": "link"
+    },
+    {
+      "label": "Icon",
+      "data": "icon"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "Menu");
+  menuSource.table = populateTable(menuSource) 
+menuSource.buttons = [{
+    iconName: "create",
+    color: "warning",
+    onClickFunction: editData,
+    fnParams: {
+      customCols: [
+
+'category',
+'icon',
+'id','link','name', {label: 'parent_id', selection: menuSource.allData}
+
+      ]
+    }
+  }]
+  roleSource = new dataSource("roles", {}, null, [{
+      "label": "ID",
+      "data": "id"
+    },{
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "Role", [
+
+        {
+          iconName: "add",
+          color: "primary",
+          onClickFunction: newAssocData,
+          fnParams: {
+            targets: [{
+                parent: "id",
+                child: "role_id"
+              }
+            ],
+            mod: "RoleMenu",
+            link: "role_menus",
+            href: "#subSubTable",
+            data: {
+              id: 0,
+              role_id: 0
+            },
+            customCols: [
+              'id',
+              'role_id',
+              {
+                label: "menu_id",
+                checkboxes: menuSource.allData,
+              }
+            ]
+          }
+        },
+  
+    {
+      iconName: "list",
+      color: "info",
+      onClickFunction: showAssocData,
+      fnParams: {
+        customCols: null,
+        extraParams: [{
+          parent: "id",
+          child: "role_id"
+        }],
+        subSource: rolemenuSource
+      }
+    },
+    {
+      iconName: "group",
+      color: "info",
+      onClickFunction: showAssocData,
+      fnParams: {
+        customCols: null,
+        extraParams: [{
+          parent: "id",
+          child: "role_id"
+        }],
+        subSource: userSubSource
+      }
+    },
+    {
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {}
+    }
+  ]);
+  roleSource.table = populateTable(roleSource)
+  userSource = new dataSource("users", {}, ['id', 'name', 'username', 'password', 'role', {
+    label: 'role_id',
+    selection: [{
+      id: 0,
+      name: "New"
+    }]
+  }], [{
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Img",
+      "data": "image_url"
+    },
+    {
+      "label": "Username",
+      "data": "username"
+    },
+    {
+      "label": "Role",
+      "data": "role_id"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "User", [{
+    iconName: "create",
+    color: "danger",
+    onClickFunction: editData,
+    fnParams: {
+      customCols: ['id', 'password', {
+        label: 'crypted_password',
+        hidden: true
+      }]
+    }
+  }, {
+    iconName: "create",
+    color: "warning",
+    onClickFunction: editData,
+    fnParams: {
+      customCols: ['id', 'name', 'username', {
+        'label': 'role_id',
+        selection: roleSource.allData
+      }, {label: 'image_url', upload: true}]
+    }
+  }]);
+
+  userDataSources["users"] = userSource
+  userDataSources["roles"] = roleSource
+  userDataSources["menus"] = menuSource
+  userDataSources["role_menus"] = rolemenuSource
+  var dts = new dtSource(userDataSources);
+  dts.populateTables("#userDt", "User Management")
+
+</script>

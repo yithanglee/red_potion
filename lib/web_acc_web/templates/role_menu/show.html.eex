@@ -1,0 +1,18 @@
+<h1>Show Role menu</h1>
+
+<ul>
+
+  <li>
+    <strong>Role:</strong>
+    <%= @role_menu.role_id %>
+  </li>
+
+  <li>
+    <strong>Menu:</strong>
+    <%= @role_menu.menu_id %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.role_menu_path(@conn, :edit, @role_menu) %></span>
+<span><%= link "Back", to: Routes.role_menu_path(@conn, :index) %></span>

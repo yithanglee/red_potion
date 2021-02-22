@@ -1,0 +1,28 @@
+<h1>Show Menu</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @menu.name %>
+  </li>
+
+  <li>
+    <strong>Category:</strong>
+    <%= @menu.category %>
+  </li>
+
+  <li>
+    <strong>Link:</strong>
+    <%= @menu.link %>
+  </li>
+
+  <li>
+    <strong>Icon:</strong>
+    <%= @menu.icon %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.menu_path(@conn, :edit, @menu) %></span>
+<span><%= link "Back", to: Routes.menu_path(@conn, :index) %></span>
