@@ -1,0 +1,46 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link10">
+    <div class="row dt">
+      <div class="col-lg-12" id="customerDt">
+      </div>
+    </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+   var customerDataSources = {}
+    customerSource = new dataSource("customers", {}, null, [
+    {"label": "Name" , "data": "name"},
+    {"label": "Phone" , "data": "phone"},
+    {"label": "Email" , "data": "email"},
+    {"label": "Address" , "data": "address"},
+    {"label": "Organization" , "data": "organization"},
+    {"label": "Terms" , "data": "terms"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Customer", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+    customerDataSources["customers"] = customerSource
+  var dts = new dtSource(customerDataSources);
+  dts.populateTables("#customerDt", "Customer Management")
+</script>

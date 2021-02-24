@@ -1,0 +1,33 @@
+<h1>Show Stock movement</h1>
+
+<ul>
+
+  <li>
+    <strong>Product:</strong>
+    <%= @stock_movement.product_id %>
+  </li>
+
+  <li>
+    <strong>Location:</strong>
+    <%= @stock_movement.location_id %>
+  </li>
+
+  <li>
+    <strong>Action:</strong>
+    <%= @stock_movement.action %>
+  </li>
+
+  <li>
+    <strong>Reference:</strong>
+    <%= @stock_movement.reference %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @stock_movement.quantity %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_movement_path(@conn, :edit, @stock_movement) %></span>
+<span><%= link "Back", to: Routes.stock_movement_path(@conn, :index) %></span>

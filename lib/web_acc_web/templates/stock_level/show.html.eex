@@ -1,0 +1,43 @@
+<h1>Show Stock level</h1>
+
+<ul>
+
+  <li>
+    <strong>Product:</strong>
+    <%= @stock_level.product_id %>
+  </li>
+
+  <li>
+    <strong>Location:</strong>
+    <%= @stock_level.location_id %>
+  </li>
+
+  <li>
+    <strong>Onhand:</strong>
+    <%= @stock_level.onhand %>
+  </li>
+
+  <li>
+    <strong>Available:</strong>
+    <%= @stock_level.available %>
+  </li>
+
+  <li>
+    <strong>Ordered:</strong>
+    <%= @stock_level.ordered %>
+  </li>
+
+  <li>
+    <strong>Min order:</strong>
+    <%= @stock_level.min_order %>
+  </li>
+
+  <li>
+    <strong>Min alert:</strong>
+    <%= @stock_level.min_alert %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_level_path(@conn, :edit, @stock_level) %></span>
+<span><%= link "Back", to: Routes.stock_level_path(@conn, :index) %></span>

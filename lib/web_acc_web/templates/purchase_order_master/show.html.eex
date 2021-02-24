@@ -1,0 +1,28 @@
+<h1>Show Purchase order master</h1>
+
+<ul>
+
+  <li>
+    <strong>Order date:</strong>
+    <%= @purchase_order_master.order_date %>
+  </li>
+
+  <li>
+    <strong>Location:</strong>
+    <%= @purchase_order_master.location_id %>
+  </li>
+
+  <li>
+    <strong>Request by:</strong>
+    <%= @purchase_order_master.request_by %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @purchase_order_master.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.purchase_order_master_path(@conn, :edit, @purchase_order_master) %></span>
+<span><%= link "Back", to: Routes.purchase_order_master_path(@conn, :index) %></span>

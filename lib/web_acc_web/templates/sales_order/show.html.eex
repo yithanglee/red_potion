@@ -1,0 +1,38 @@
+<h1>Show Sales order</h1>
+
+<ul>
+
+  <li>
+    <strong>Som:</strong>
+    <%= @sales_order.som_id %>
+  </li>
+
+  <li>
+    <strong>Product name:</strong>
+    <%= @sales_order.product_name %>
+  </li>
+
+  <li>
+    <strong>Product:</strong>
+    <%= @sales_order.product_id %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @sales_order.quantity %>
+  </li>
+
+  <li>
+    <strong>Selling price:</strong>
+    <%= @sales_order.selling_price %>
+  </li>
+
+  <li>
+    <strong>Unit price:</strong>
+    <%= @sales_order.unit_price %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.sales_order_path(@conn, :edit, @sales_order) %></span>
+<span><%= link "Back", to: Routes.sales_order_path(@conn, :index) %></span>

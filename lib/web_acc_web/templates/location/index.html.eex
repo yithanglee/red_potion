@@ -1,0 +1,45 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link1">
+    <div class="row dt" >
+      <div class="col-lg-12" id="locationDt">
+      </div>
+    </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+
+<script type="text/javascript">
+   var locationDataSources = {}
+    locationSource = new dataSource("locations", {}, null, [
+    {"label": "Name" , "data": "name"},
+    {"label": "Address" , "data": "address"},
+    {"label": "Contact" , "data": "contact"},
+    {"label": "Long" , "data": "long"},
+    {"label": "Lat" , "data": "lat"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Location", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+    locationDataSources["locations"] = locationSource
+  var dts = new dtSource(locationDataSources);
+  dts.populateTables("#locationDt", "Location Management")
+</script>

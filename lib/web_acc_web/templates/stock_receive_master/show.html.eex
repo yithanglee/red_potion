@@ -1,0 +1,23 @@
+<h1>Show Stock receive master</h1>
+
+<ul>
+
+  <li>
+    <strong>Pom:</strong>
+    <%= @stock_receive_master.pom_id %>
+  </li>
+
+  <li>
+    <strong>Srn no:</strong>
+    <%= @stock_receive_master.srn_no %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @stock_receive_master.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_receive_master_path(@conn, :edit, @stock_receive_master) %></span>
+<span><%= link "Back", to: Routes.stock_receive_master_path(@conn, :index) %></span>

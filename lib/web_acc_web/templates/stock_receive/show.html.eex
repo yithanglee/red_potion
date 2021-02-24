@@ -1,0 +1,23 @@
+<h1>Show Stock receive</h1>
+
+<ul>
+
+  <li>
+    <strong>Pom:</strong>
+    <%= @stock_receive.pom_id %>
+  </li>
+
+  <li>
+    <strong>Received by:</strong>
+    <%= @stock_receive.received_by %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @stock_receive.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_receive_path(@conn, :edit, @stock_receive) %></span>
+<span><%= link "Back", to: Routes.stock_receive_path(@conn, :index) %></span>

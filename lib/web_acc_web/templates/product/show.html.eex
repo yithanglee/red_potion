@@ -1,0 +1,38 @@
+<h1>Show Product</h1>
+
+<ul>
+
+  <li>
+    <strong>Sku:</strong>
+    <%= @product.sku %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @product.name %>
+  </li>
+
+  <li>
+    <strong>Image url:</strong>
+    <%= @product.image_url %>
+  </li>
+
+  <li>
+    <strong>Retail price:</strong>
+    <%= @product.retail_price %>
+  </li>
+
+  <li>
+    <strong>Short desc:</strong>
+    <%= @product.short_desc %>
+  </li>
+
+  <li>
+    <strong>Long desc:</strong>
+    <%= @product.long_desc %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.product_path(@conn, :edit, @product) %></span>
+<span><%= link "Back", to: Routes.product_path(@conn, :index) %></span>

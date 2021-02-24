@@ -1,0 +1,18 @@
+<h1>Show Purchase order</h1>
+
+<ul>
+
+  <li>
+    <strong>Supplier product:</strong>
+    <%= @purchase_order.supplier_product_id %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @purchase_order.quantity %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.purchase_order_path(@conn, :edit, @purchase_order) %></span>
+<span><%= link "Back", to: Routes.purchase_order_path(@conn, :index) %></span>

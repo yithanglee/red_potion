@@ -1,0 +1,44 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link0">
+    <div class="row">
+      <div class="col-lg-12" id="stock_movementDt">
+      </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+   var stock_movementDataSources = {}
+    stock_movementSource = new dataSource("stock_movements", {}, null, [
+    {"label": "Product" , "data": "product_id"},
+    {"label": "Location" , "data": "location_id"},
+    {"label": "Action" , "data": "action"},
+    {"label": "Reference" , "data": "reference"},
+    {"label": "Quantity" , "data": "quantity"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Stock movement", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+    stock_movementDataSources["stock_movements"] = stock_movementSource
+  var dts = new dtSource(stock_movementDataSources);
+  dts.populateTables("#stock_movementDt", "Stock movement Management")
+</script>

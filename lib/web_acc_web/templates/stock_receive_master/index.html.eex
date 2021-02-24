@@ -1,0 +1,63 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link1">
+    <div class="row dt">
+      <div class="col-lg-12" id="stock_receive_masterDt">
+      </div>
+    </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+   var stock_receive_masterDataSources = {}
+
+
+  purchase_order_masterSource = new dataSource("purchase_order_masters", {}, null, [
+  ], null, [], [], "PurchaseOrderMaster", [
+  ]);
+
+  getTableData(purchase_order_masterSource)
+     var srn_cols = ['id', 'srn_no',
+    {
+      label: 'pom_id',
+      selection: $(purchase_order_masterSource.allData).map((i, v) => {
+        return {
+          id: v.id,
+          name: v.po_no
+        }
+      }).toArray()
+    }
+
+
+    , 'received_by', {label: 'status',  selection: ['Initial', 'Received',  'Partial']}]
+    stock_receive_masterSource = new dataSource("stock_receive_masters", {}, srn_cols, [
+    {"label": "id" , "data": "id"},
+    {"label": "Srn no" , "data": "srn_no"},
+    {"label": "Status" , "data": "status"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "StockReceiveMaster", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+           customCols: srn_cols
+      }
+    }] );
+  
+    stock_receive_masterDataSources["stock_receive_masters"] = stock_receive_masterSource
+  var dts = new dtSource(stock_receive_masterDataSources);
+  dts.populateTables("#stock_receive_masterDt", "Stock receive master Management")
+</script>

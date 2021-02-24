@@ -1,0 +1,361 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link10">
+    <div class="row dt">
+      <div class="col-lg-12" id="sales_order_masterDt">
+      </div>
+    </div>
+    <div class="row excel" style="display: none;">
+      <div class="col-lg-12" id="spreadsheet">
+
+      </div>
+      <div class="col-lg-1">
+        <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+      </div>
+      <div class="col-lg-1">
+        <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript">
+  var sales_order_masterDataSources = {}
+  var product_entry = []
+
+  function addIntoSomData(params) {
+    console.log(params);
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    var data = table.data()[params.index]
+
+    function call() {
+      var added = $(product_entry).filter((i, v) => {
+        return v.id == data.id;
+      })
+      if (added.length == 0) {
+        product_entry.push({
+          ...data,
+          ...{
+            quantity: 1
+          }
+        })
+      } else {
+        $(added)[0].quantity += 1
+      }
+      // product_entry.push(data )
+      console.log(product_entry)
+      $("#add_result").html("")
+      $(product_entry).each((i, v) => {
+        var tr =
+          `
+      <tr>
+      <td>` + v.id + `</td>
+      <td>` + v.name + `</td>
+      <td>` + v.sku + `</td>
+      <td>` + v.quantity + `</td>
+      </tr>
+      `
+        $("#add_result").append(tr)
+      })
+    }
+    call();
+  }
+  productSource = new dataSource("products", {}, null, [{
+      "label": "Sku",
+      "data": "sku"
+    },
+    {
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Short desc",
+      "data": "short_desc"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#Products", [], [], "Product", [{
+    iconName: "add",
+    color: "rose",
+    onClickFunction: addIntoSomData,
+    fnParams: {}
+  }]);
+
+  function addProductData(params) {
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    // the dataTable will populate the index and row.
+    var r = table.row(params.row);
+    var preferedLink;
+    if (params.link != null) {
+      preferedLink = params.link;
+    } else {
+      preferedLink = dt.link;
+    }
+    product_entry = []
+    var som_id = table.data()[params.index].id;
+
+    function call() {
+      var jj =
+        `<h3>Add products to Sales Order</h3>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header" >Products</div>
+              <div class="card-body">
+              <table id="Products" style="width: 100%;">
+              <thead></thead>
+              <tbody></tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">Products to be sold</div>
+              <div class="card-body">
+              <table class="table" >
+              <thead><tr>
+              <th>id</th> 
+              <th>name </th>
+              <th>sku </th>
+              <th>qty</th>
+              </tr></thead>
+              <tbody id="add_result"></tbody>
+              </table>
+              </div>
+              <div class="card-footer">
+                <div class="btn btn-primary float-right update_so">Update SO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      `;
+      r.child(jj).show();
+      productSource.table = populateTable(productSource)
+
+      $(".update_so").click(() => {
+        $(product_entry).each((i, v) => {
+          v.product_id = v.id
+          v.product_name = v.name
+          delete v["id"]
+          $.ajax({
+            url: "/api/sales_orders",
+            dataType: "json",
+            method: "POST",
+            data: {
+              sales_orders: {
+                ...v,
+                ...{
+                  id: 0,
+                  som_id: som_id
+                }
+              }
+            }
+          }).done(function() {})
+        })
+        r.child.hide();
+        $.notify({
+          icon: "add_alert",
+          message: "Updated!"
+        }, {
+          type: "success",
+          timer: 1000,
+          placement: {
+            from: "top",
+            align: "center"
+          }
+        });
+        // console.log(product_entry) 
+        // create the product order with pom_id 
+        // delete all the po entries in pom
+      })
+    }
+    if (r.child.isShown()) {
+      if (gParent == r) {
+        r.child.hide();
+      } else {
+        gParent = r;
+        call();
+      }
+    } else {
+      table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+        this.child.hide();
+      });
+      gParent = r;
+      call();
+    }
+  }
+  customerSource = new dataSource("customers", {}, null, [{
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Phone",
+      "data": "phone"
+    },
+    {
+      "label": "Email",
+      "data": "email"
+    },
+    {
+      "label": "Address",
+      "data": "address"
+    },
+    {
+      "label": "Organization",
+      "data": "organization"
+    },
+    {
+      "label": "Terms",
+      "data": "terms"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "Customer", [{
+    iconName: "create",
+    color: "warning",
+    onClickFunction: editData,
+    fnParams: {}
+  }]);
+  getTableData(customerSource)
+  locationSource = new dataSource("locations", {}, null, [], null, [], [], "Location", []);
+  getTableData(locationSource)
+  var somCols = [
+    'created_by',
+    {
+      label: 'customer_id',
+      selection: customerSource.allData
+    },
+    'delivery_date',
+    'id',
+    'long',
+    'lat',
+    'to',
+    {
+      label: 'location_id',
+      selection: locationSource.allData
+    },
+    {
+      label: 'status',
+      selection: ['Initial', 'Packing', 'Done']
+    },
+  ]
+  sales_orderSource = new dataSource("sales_orders", {}, null, [{
+      "label": "Som",
+      "data": "som_id"
+    },
+    {
+      "label": "Product name",
+      "data": "product_name"
+    },
+    {
+      "label": "Product",
+      "data": "product_id"
+    },
+    {
+      "label": "Quantity",
+      "data": "quantity"
+    },
+    {
+      "label": "Selling price",
+      "data": "selling_price"
+    },
+    {
+      "label": "Unit price",
+      "data": "unit_price"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#subTable", [], [], "SalesOrder", [{
+    iconName: "create",
+    color: "warning",
+    onClickFunction: editData,
+    fnParams: {}
+  }]);
+  sales_orderSource.table = populateTable(sales_orderSource)
+  sales_order_masterSource = new dataSource("sales_order_masters", {}, somCols, [{
+      "label": "id",
+      "data": "id"
+    },
+    {
+      "label": "Delivery date",
+      "data": "delivery_date"
+    },
+    {
+      "label": "Customer",
+      "data": "customer_id"
+    },
+    {
+      "label": "Long",
+      "data": "long"
+    },
+    {
+      "label": "Lat",
+      "data": "lat"
+    },
+    {
+      "label": "To",
+      "data": "to"
+    },
+    {
+      "label": "Status",
+      "data": "status"
+    },
+    {
+      "label": "Created by",
+      "data": "created_by"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "SalesOrderMaster", [
+    // {
+    //   iconName: "add",
+    //   color: "rose",
+    //   onClickFunction: receiveProductData,
+    //   fnParams: {}
+    // },
+    {
+      iconName: "list",
+      color: "info",
+      onClickFunction: showAssocData,
+      fnParams: {
+        title: "Ordered Products",
+        customCols: null,
+        extraParams: [{
+          parent: "id",
+          child: "som_id"
+        }],
+        subSource: sales_orderSource
+      }
+    },
+    {
+      iconName: "add",
+      color: "warning",
+      onClickFunction: addProductData,
+      fnParams: {}
+    },
+    {
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {}
+    }
+  ]);
+  sales_order_masterDataSources["sales_orders"] = sales_orderSource
+  sales_order_masterDataSources["sales_order_masters"] = sales_order_masterSource
+  sales_order_masterDataSources["customers"] = customerSource
+  var dts = new dtSource(sales_order_masterDataSources);
+  dts.populateTables("#sales_order_masterDt", "Sales order master Management")
+</script>

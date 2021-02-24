@@ -1,0 +1,458 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link7">
+    <div class="row dt">
+      <div class="col-lg-12" id="purchase_order_masterDt">
+      </div>
+    </div>
+    <div class="row excel" style="display: none;">
+      <div class="col-lg-12" id="spreadsheet">
+
+      </div>
+      <div class="col-lg-1">
+        <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+      </div>
+      <div class="col-lg-1">
+        <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+  var purchase_order_masterDataSources = {}
+  purchase_orderSource = new dataSource("purchase_orders", {}, null, [
+    {
+      "label": "id",
+      "data": "id"
+    },
+    {
+      "label": "PID",
+      "data": "product_id"
+    },
+    {
+      "label": "Product",
+      "data": "product_name"
+    },
+    {
+      "label": "Quantity",
+      "data": "quantity"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#subTable", [], [], "Purchase order", [{
+    iconName: "delete",
+    color: "danger",
+    onClickFunction: deleteData,
+    fnParams: {}
+  }]);
+  locationSource = new dataSource("locations", {}, null, [
+  ], null, [], [], "Location", []);
+  getTableData(locationSource)
+
+  productSource = new dataSource("products", {}, null, [
+    {
+      "label": "Sku",
+      "data": "sku"
+    },
+    {
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Short desc",
+      "data": "short_desc"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#Products", [], [], "Product", [{
+    iconName: "add",
+    color: "rose",
+    onClickFunction: addIntoPomData,
+    fnParams: {}
+  }]);
+  var product_entry = []
+
+  function addIntoPomData(params) {
+    console.log(params);
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    var data = table.data()[params.index]
+
+    function call() {
+      var added = $(product_entry).filter((i, v) => {
+        return v.id == data.id;
+      })
+      if (added.length == 0) {
+
+        product_entry.push({
+          ...data,
+          ...{
+            quantity: 1
+          }
+        })
+      } else {
+        $(added)[0].quantity += 1
+      }
+      // product_entry.push(data )
+      console.log(product_entry)
+      $("#add_result").html("")
+      $(product_entry).each((i, v) => {
+        var tr =
+          `
+      <tr>
+      <td>` + v.id + `</td>
+      <td>` + v.name + `</td>
+      <td>` + v.sku + `</td>
+      <td>` + v.quantity + `</td>
+      </tr>
+      `
+        $("#add_result").append(tr)
+      })
+    }
+    call();
+  }
+  function receiveProductData(params) {
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    // the dataTable will populate the index and row.
+    var r = table.row(params.row);
+    var preferedLink;
+    if (params.link != null) {
+      preferedLink = params.link;
+    } else {
+      preferedLink = dt.link;
+    }
+    product_entry = []
+    var pom_id = table.data()[params.index].id ; 
+
+    function call() {
+
+      var jj =
+        `<h3>Receiving Product</h3>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header" >Ordered Products</div>
+              <div class="card-body">
+              <table id="Products" style="width: 100%;">
+              <thead></thead>
+              <tbody></tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">Products Received</div>
+              <div class="card-body">
+              <table class="table" >
+              <thead><tr>
+              <th>id</th> 
+              <th>name </th>
+              <th>sku </th>
+              <th>qty</th>
+              </tr></thead>
+              <tbody id="add_result"></tbody>
+              </table>
+              </div>
+              <div class="card-footer">
+                <div class="btn btn-primary float-right receive_po">Received</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      `;
+      r.child(jj).show();
+      poSource = new dataSource("purchase_orders", {
+        pom_id: pom_id
+      }, null, [
+        {
+          label: "id", data: "id"
+        },
+        {
+          label: "quantity", data: "quantity"
+        },
+        {
+          label: "product_name", data: "product_name"
+        },
+        {
+          label: "Action", data: "id"
+        }
+      ], "#Products", [], [], "PurchaseOrder", []);
+      // getTableData(poSource)
+      poSource.table = populateTable(poSource)
+
+      poSource.table.on("draw", function(){
+
+        $(poSource.allData).each((i,v) => {
+          var tr = 
+          `
+          <tr>
+            <td>`+v.id+`</td>
+            <td>`+v.product_name+`</td>
+            <td>`+v.sku+`</td>
+            <td>`+v.quantity+`</td>
+          </tr>
+          `
+          $("#add_result").append(tr)
+        })
+      })
+
+
+      $(".receive_po").click(() => {
+
+        var srm_id ; 
+
+        $.ajax({async: false,
+          url: "/api/stock_receive_masters",
+          dataType: "json",
+          method: "POST",
+         
+          data: {stock_receive_masters: {id: 0, pom_id: pom_id, status: "Received", srn_no: "SRN000"}}
+        }).done(function(j){
+          srm_id = j.id; 
+        })
+
+        
+        $(poSource.allData).each((i,v) => {
+
+          $.ajax({
+            url: "/api/stock_receives",
+            dataType: "json",
+            method: "POST",
+           
+            data: {stock_receives: {
+               ...v, ...{id: 0, pom_id: pom_id, srm_id: srm_id}
+            }}
+          }).done(function(){
+          })
+        })
+        r.child.hide();
+        $.notify(
+          {
+            icon: "add_alert",
+            message: "Received!"
+          },
+          {
+            type: "success",
+            timer: 1000,
+            placement: {
+              from: "top",
+              align: "center"
+            }
+          }
+        );
+        // console.log(product_entry) 
+        // create the product order with pom_id 
+        // delete all the po entries in pom
+
+      })
+    }
+    if (r.child.isShown()) {
+      if (gParent == r) {
+        r.child.hide();
+      } else {
+        gParent = r;
+        call();
+      }
+    } else {
+      table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+        this.child.hide();
+      });
+      gParent = r;
+      call();
+    }
+  }
+  function addProductData(params) {
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    // the dataTable will populate the index and row.
+    var r = table.row(params.row);
+    var preferedLink;
+    if (params.link != null) {
+      preferedLink = params.link;
+    } else {
+      preferedLink = dt.link;
+    }
+    product_entry = []
+    var pom_id = table.data()[params.index].id ; 
+
+    function call() {
+      var jj =
+        `<h3>Add products to Purchase Order</h3>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header" >Products</div>
+              <div class="card-body">
+              <table id="Products" style="width: 100%;">
+              <thead></thead>
+              <tbody></tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">Products to be Ordered</div>
+              <div class="card-body">
+              <table class="table" >
+              <thead><tr>
+              <th>id</th> 
+              <th>name </th>
+              <th>sku </th>
+              <th>qty</th>
+              </tr></thead>
+              <tbody id="add_result"></tbody>
+              </table>
+              </div>
+              <div class="card-footer">
+                <div class="btn btn-primary float-right update_po">Update PO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      `;
+      r.child(jj).show();
+      productSource.table = populateTable(productSource)
+
+      $(".update_po").click(() =>{
+        $(product_entry).each((i,v) => {
+
+          v.product_id = v.id 
+          delete v["id"]
+
+          $.ajax({
+            url: "/api/purchase_orders",
+            dataType: "json",
+            method: "POST",
+           
+            data: {purchase_orders: {
+               ...v, ...{id: 0, pom_id: pom_id}
+            }}
+          }).done(function(){
+          })
+        })
+        r.child.hide();
+        $.notify(
+          {
+            icon: "add_alert",
+            message: "Updated!"
+          },
+          {
+            type: "success",
+            timer: 1000,
+            placement: {
+              from: "top",
+              align: "center"
+            }
+          }
+        );
+        // console.log(product_entry) 
+        // create the product order with pom_id 
+        // delete all the po entries in pom
+
+      })
+    }
+    if (r.child.isShown()) {
+      if (gParent == r) {
+        r.child.hide();
+      } else {
+        gParent = r;
+        call();
+      }
+    } else {
+      table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+        this.child.hide();
+      });
+      gParent = r;
+      call();
+    }
+  }
+  var pomCols = ['po_no',
+    'id', {
+      label: 'location_id',
+      selection: locationSource.allData
+    }, 'order_date', 'request_by', {label: 'status', selection: ['Initial', 'Ordered', 'Received']}
+  ]
+  purchase_order_masterSource = new dataSource("purchase_order_masters", {}, pomCols, [{
+      "label": "ID",
+      "data": "id"
+    },{
+      "label": "PO",
+      "data": "po_no"
+    },{
+      "label": "Order date",
+      "data": "order_date"
+    },
+    {
+      "label": "Location",
+      "data": "location_id"
+    },
+    {
+      "label": "Request by",
+      "data": "request_by"
+    },
+    {
+      "label": "Status",
+      "data": "status"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], null, [], [], "PurchaseOrderMaster", [
+
+    {
+      iconName: "add",
+      color: "rose",
+      onClickFunction: receiveProductData,
+      fnParams: {}
+    },
+
+    {
+      iconName: "list",
+      color: "info",
+      onClickFunction: showAssocData,
+      fnParams: {
+        title: "Ordered Products",
+        customCols: null,
+        extraParams: [{
+          parent: "id",
+          child: "pom_id"
+        }],
+        subSource: purchase_orderSource
+      }
+    },
+
+    {
+      iconName: "add",
+      color: "warning",
+      onClickFunction: addProductData,
+      fnParams: {}
+    },
+    {
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        customCols: pomCols
+      }
+    }
+  ]);
+  purchase_order_masterDataSources["purchase_order_masters"] = purchase_order_masterSource
+
+  purchase_order_masterDataSources["purchase_orders"] = purchase_orderSource
+  var dts = new dtSource(purchase_order_masterDataSources);
+  dts.populateTables("#purchase_order_masterDt", "Purchase order master Management")
+</script>

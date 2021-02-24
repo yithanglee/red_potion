@@ -1,0 +1,5 @@
+<h1>Edit Stock receive master</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.stock_receive_master_path(@conn, :update, @stock_receive_master)) %>
+
+<span><%= link "Back", to: Routes.stock_receive_master_path(@conn, :index) %></span>

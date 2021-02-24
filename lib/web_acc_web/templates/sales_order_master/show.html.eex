@@ -1,0 +1,43 @@
+<h1>Show Sales order master</h1>
+
+<ul>
+
+  <li>
+    <strong>Customer:</strong>
+    <%= @sales_order_master.customer_id %>
+  </li>
+
+  <li>
+    <strong>Long:</strong>
+    <%= @sales_order_master.long %>
+  </li>
+
+  <li>
+    <strong>Lat:</strong>
+    <%= @sales_order_master.lat %>
+  </li>
+
+  <li>
+    <strong>To:</strong>
+    <%= @sales_order_master.to %>
+  </li>
+
+  <li>
+    <strong>Delivery date:</strong>
+    <%= @sales_order_master.delivery_date %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @sales_order_master.status %>
+  </li>
+
+  <li>
+    <strong>Created by:</strong>
+    <%= @sales_order_master.created_by %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.sales_order_master_path(@conn, :edit, @sales_order_master) %></span>
+<span><%= link "Back", to: Routes.sales_order_master_path(@conn, :index) %></span>

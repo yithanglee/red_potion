@@ -1,0 +1,18 @@
+<h1>Show Supplier product</h1>
+
+<ul>
+
+  <li>
+    <strong>Supplier:</strong>
+    <%= @supplier_product.supplier_id %>
+  </li>
+
+  <li>
+    <strong>Product:</strong>
+    <%= @supplier_product.product_id %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.supplier_product_path(@conn, :edit, @supplier_product) %></span>
+<span><%= link "Back", to: Routes.supplier_product_path(@conn, :index) %></span>
