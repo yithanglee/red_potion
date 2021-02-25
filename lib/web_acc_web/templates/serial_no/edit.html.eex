@@ -1,0 +1,5 @@
+<h1>Edit Serial no</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.serial_no_path(@conn, :update, @serial_no)) %>
+
+<span><%= link "Back", to: Routes.serial_no_path(@conn, :index) %></span>

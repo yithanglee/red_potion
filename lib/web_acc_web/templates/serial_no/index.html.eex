@@ -1,0 +1,72 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link10">
+    <div class="row dt">
+      <div class="col-lg-12" id="serial_noDt">
+      </div>
+    </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+   var serial_noDataSources = {}
+
+
+    productSource = new dataSource("products", {}, ['id',{label: 'image_url', upload: true},'name','retail_price','short_desc','sku'], [
+    {"label": "Sku" , "data": "sku"},
+    {"label": "Name" , "data": "name"},
+    {"label": "Image url" , "data": "image_url"},
+    {"label": "Retail price" , "data": "retail_price"},
+    {"label": "Short desc" , "data": "short_desc"},
+    {"label": "Long desc" , "data": "long_desc"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "Product", [
+    {
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+
+    getTableData(productSource)
+
+    cols = [
+
+'id',{label: 'product_id', selection: productSource.allData},'serial_no'
+    ]
+
+    serial_noSource = new dataSource("serial_nos", {}, cols, [
+    {"label": "Serial no" , "data": "serial_no"},
+    {"label": "Product" , "data": "product_id"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "SerialNo", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        customCols: cols
+        
+      }
+    }] );
+  
+    serial_noDataSources["serial_nos"] = serial_noSource
+  var dts = new dtSource(serial_noDataSources);
+  dts.populateTables("#serial_noDt", "Serial no Management")
+</script>

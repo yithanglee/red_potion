@@ -2576,4 +2576,127 @@ defmodule WebAcc.Settings do
   def change_stock_transfer(%StockTransfer{} = stock_transfer) do
     StockTransfer.changeset(stock_transfer, %{})
   end
+
+  alias WebAcc.Settings.SerialNo
+
+  @doc """
+  Returns the list of serial_nos.
+
+  ## Examples
+
+      iex> list_serial_nos()
+      [%SerialNo{}, ...]
+
+  """
+  def list_serial_nos do
+    Repo.all(SerialNo)
+  end
+
+  @doc """
+  Gets a single serial_no.
+
+  Raises `Ecto.NoResultsError` if the Serial no does not exist.
+
+  ## Examples
+
+      iex> get_serial_no!(123)
+      %SerialNo{}
+
+      iex> get_serial_no!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_serial_no!(id), do: Repo.get!(SerialNo, id)
+
+  @doc """
+  Creates a serial_no.
+
+  ## Examples
+
+      iex> create_serial_no(%{field: value})
+      {:ok, %SerialNo{}}
+
+      iex> create_serial_no(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_serial_no(attrs \\ %{}) do
+    a = 
+    %SerialNo{}
+    |> SerialNo.changeset(attrs)
+    |> Repo.insert()
+  
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+      _ ->
+        nil
+    end
+    a 
+  end
+
+  @doc """
+  Updates a serial_no.
+
+  ## Examples
+
+      iex> update_serial_no(serial_no, %{field: new_value})
+      {:ok, %SerialNo{}}
+
+      iex> update_serial_no(serial_no, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_serial_no(%SerialNo{} = serial_no, attrs) do
+    a = 
+    serial_no
+    |> SerialNo.changeset(attrs)
+    |> Repo.update()
+
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+      _ ->
+        nil
+    end
+
+    a 
+  end
+
+  @doc """
+  Deletes a serial_no.
+
+  ## Examples
+
+      iex> delete_serial_no(serial_no)
+      {:ok, %SerialNo{}}
+
+      iex> delete_serial_no(serial_no)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_serial_no(%SerialNo{} = serial_no) do
+    Repo.delete(serial_no)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking serial_no changes.
+
+  ## Examples
+
+      iex> change_serial_no(serial_no)
+      %Ecto.Changeset{source: %SerialNo{}}
+
+  """
+  def change_serial_no(%SerialNo{} = serial_no) do
+    SerialNo.changeset(serial_no, %{})
+  end
 end

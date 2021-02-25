@@ -1436,4 +1436,65 @@ defmodule WebAcc.SettingsTest do
       assert %Ecto.Changeset{} = Settings.change_stock_transfer(stock_transfer)
     end
   end
+
+  describe "serial_nos" do
+    alias WebAcc.Settings.SerialNo
+
+    @valid_attrs %{product_id: 42, serial_no: "some serial_no"}
+    @update_attrs %{product_id: 43, serial_no: "some updated serial_no"}
+    @invalid_attrs %{product_id: nil, serial_no: nil}
+
+    def serial_no_fixture(attrs \\ %{}) do
+      {:ok, serial_no} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Settings.create_serial_no()
+
+      serial_no
+    end
+
+    test "list_serial_nos/0 returns all serial_nos" do
+      serial_no = serial_no_fixture()
+      assert Settings.list_serial_nos() == [serial_no]
+    end
+
+    test "get_serial_no!/1 returns the serial_no with given id" do
+      serial_no = serial_no_fixture()
+      assert Settings.get_serial_no!(serial_no.id) == serial_no
+    end
+
+    test "create_serial_no/1 with valid data creates a serial_no" do
+      assert {:ok, %SerialNo{} = serial_no} = Settings.create_serial_no(@valid_attrs)
+      assert serial_no.product_id == 42
+      assert serial_no.serial_no == "some serial_no"
+    end
+
+    test "create_serial_no/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Settings.create_serial_no(@invalid_attrs)
+    end
+
+    test "update_serial_no/2 with valid data updates the serial_no" do
+      serial_no = serial_no_fixture()
+      assert {:ok, %SerialNo{} = serial_no} = Settings.update_serial_no(serial_no, @update_attrs)
+      assert serial_no.product_id == 43
+      assert serial_no.serial_no == "some updated serial_no"
+    end
+
+    test "update_serial_no/2 with invalid data returns error changeset" do
+      serial_no = serial_no_fixture()
+      assert {:error, %Ecto.Changeset{}} = Settings.update_serial_no(serial_no, @invalid_attrs)
+      assert serial_no == Settings.get_serial_no!(serial_no.id)
+    end
+
+    test "delete_serial_no/1 deletes the serial_no" do
+      serial_no = serial_no_fixture()
+      assert {:ok, %SerialNo{}} = Settings.delete_serial_no(serial_no)
+      assert_raise Ecto.NoResultsError, fn -> Settings.get_serial_no!(serial_no.id) end
+    end
+
+    test "change_serial_no/1 returns a serial_no changeset" do
+      serial_no = serial_no_fixture()
+      assert %Ecto.Changeset{} = Settings.change_serial_no(serial_no)
+    end
+  end
 end

@@ -67,6 +67,7 @@ defmodule WebAccWeb.Router do
     resources("/customers", CustomerController)
     resources("/stock_transfer_master", StockTransferMasterController)
     resources("/stock_transfers", StockTransferController)
+    resources("/serial_nos", SerialNoController)
   end
 
   scope "/api", WebAccWeb do
@@ -93,6 +94,7 @@ defmodule WebAccWeb.Router do
     resources("/customers", CustomerController)
     resources("/stock_transfer_master", StockTransferMasterController)
     resources("/stock_transfers", StockTransferController)
+    resources("/serial_nos", SerialNoController)
   end
 
   # Other scopes may use custom stacks.
