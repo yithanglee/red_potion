@@ -2300,4 +2300,280 @@ defmodule WebAcc.Settings do
   def change_customer(%Customer{} = customer) do
     Customer.changeset(customer, %{})
   end
+
+  alias WebAcc.Settings.StockTransferMaster
+
+  @doc """
+  Returns the list of stock_transfer_master.
+
+  ## Examples
+
+      iex> list_stock_transfer_master()
+      [%StockTransferMaster{}, ...]
+
+  """
+  def list_stock_transfer_master do
+    Repo.all(StockTransferMaster)
+  end
+
+  @doc """
+  Gets a single stock_transfer_master.
+
+  Raises `Ecto.NoResultsError` if the Stock transfer master does not exist.
+
+  ## Examples
+
+      iex> get_stock_transfer_master!(123)
+      %StockTransferMaster{}
+
+      iex> get_stock_transfer_master!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_stock_transfer_master!(id), do: Repo.get!(StockTransferMaster, id)
+
+  @doc """
+  Creates a stock_transfer_master.
+
+  ## Examples
+
+      iex> create_stock_transfer_master(%{field: value})
+      {:ok, %StockTransferMaster{}}
+
+      iex> create_stock_transfer_master(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_stock_transfer_master(attrs \\ %{}) do
+    a =
+      %StockTransferMaster{}
+      |> StockTransferMaster.changeset(attrs)
+      |> Repo.insert()
+
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+      _ ->
+        nil
+    end
+
+    a
+  end
+
+  @doc """
+  Updates a stock_transfer_master.
+
+  ## Examples
+
+      iex> update_stock_transfer_master(stock_transfer_master, %{field: new_value})
+      {:ok, %StockTransferMaster{}}
+
+      iex> update_stock_transfer_master(stock_transfer_master, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_stock_transfer_master(%StockTransferMaster{} = stock_transfer_master, attrs) do
+    a =
+      stock_transfer_master
+      |> StockTransferMaster.changeset(attrs)
+      |> Repo.update()
+
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+      _ ->
+        nil
+    end
+
+    a
+  end
+
+  @doc """
+  Deletes a stock_transfer_master.
+
+  ## Examples
+
+      iex> delete_stock_transfer_master(stock_transfer_master)
+      {:ok, %StockTransferMaster{}}
+
+      iex> delete_stock_transfer_master(stock_transfer_master)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_stock_transfer_master(%StockTransferMaster{} = stock_transfer_master) do
+    Repo.delete(stock_transfer_master)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking stock_transfer_master changes.
+
+  ## Examples
+
+      iex> change_stock_transfer_master(stock_transfer_master)
+      %Ecto.Changeset{source: %StockTransferMaster{}}
+
+  """
+  def change_stock_transfer_master(%StockTransferMaster{} = stock_transfer_master) do
+    StockTransferMaster.changeset(stock_transfer_master, %{})
+  end
+
+  alias WebAcc.Settings.StockTransfer
+
+  @doc """
+  Returns the list of stock_transfers.
+
+  ## Examples
+
+      iex> list_stock_transfers()
+      [%StockTransfer{}, ...]
+
+  """
+  def list_stock_transfers do
+    Repo.all(StockTransfer)
+  end
+
+  @doc """
+  Gets a single stock_transfer.
+
+  Raises `Ecto.NoResultsError` if the Stock transfer does not exist.
+
+  ## Examples
+
+      iex> get_stock_transfer!(123)
+      %StockTransfer{}
+
+      iex> get_stock_transfer!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_stock_transfer!(id), do: Repo.get!(StockTransfer, id)
+
+  def order_stm_task(model) do
+    stm = Repo.get(WebAcc.Settings.StockTransferMaster, model.stm_id)
+
+    a =
+      create_stock_movement(%{
+        action: "adjust_out",
+        location_id: stm.from_id,
+        product_id: model.product_id,
+        quantity: model.quantity,
+        reference: "STM#{stm.id}"
+      })
+
+    b =
+      create_stock_movement(%{
+        action: "adjust_in",
+        location_id: stm.to_id,
+        product_id: model.product_id,
+        quantity: model.quantity,
+        reference: "STM#{stm.id}"
+      })
+
+    [a, b]
+  end
+
+  @doc """
+  Creates a stock_transfer.
+
+  ## Examples
+
+      iex> create_stock_transfer(%{field: value})
+      {:ok, %StockTransfer{}}
+
+      iex> create_stock_transfer(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_stock_transfer(attrs \\ %{}) do
+    a =
+      %StockTransfer{}
+      |> StockTransfer.changeset(attrs)
+      |> Repo.insert()
+
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+        # Task.start_link(__MODULE__, :order_stm_task, [model])
+        b = order_stm_task(model)
+        IO.inspect(b)
+
+      _ ->
+        nil
+    end
+
+    a
+  end
+
+  @doc """
+  Updates a stock_transfer.
+
+  ## Examples
+
+      iex> update_stock_transfer(stock_transfer, %{field: new_value})
+      {:ok, %StockTransfer{}}
+
+      iex> update_stock_transfer(stock_transfer, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_stock_transfer(%StockTransfer{} = stock_transfer, attrs) do
+    a =
+      stock_transfer
+      |> StockTransfer.changeset(attrs)
+      |> Repo.update()
+
+    case a do
+      {:ok, model} ->
+        WebAccWeb.Endpoint.broadcast("user:lobby", "model_update", %{
+          source: model.__meta__.source,
+          data: Utility.s_to_map(model)
+        })
+
+      _ ->
+        nil
+    end
+
+    a
+  end
+
+  @doc """
+  Deletes a stock_transfer.
+
+  ## Examples
+
+      iex> delete_stock_transfer(stock_transfer)
+      {:ok, %StockTransfer{}}
+
+      iex> delete_stock_transfer(stock_transfer)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_stock_transfer(%StockTransfer{} = stock_transfer) do
+    Repo.delete(stock_transfer)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking stock_transfer changes.
+
+  ## Examples
+
+      iex> change_stock_transfer(stock_transfer)
+      %Ecto.Changeset{source: %StockTransfer{}}
+
+  """
+  def change_stock_transfer(%StockTransfer{} = stock_transfer) do
+    StockTransfer.changeset(stock_transfer, %{})
+  end
 end

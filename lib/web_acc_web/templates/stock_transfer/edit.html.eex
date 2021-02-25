@@ -1,0 +1,5 @@
+<h1>Edit Stock transfer</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.stock_transfer_path(@conn, :update, @stock_transfer)) %>
+
+<span><%= link "Back", to: Routes.stock_transfer_path(@conn, :index) %></span>

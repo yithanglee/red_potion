@@ -10,22 +10,10 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :web_acc, WebAccWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "0.0.0.0", port: 5291],
+  http: [port: 5291],
+  check_origin: false
 
-# new host
-config :web_acc, WebAccWeb.Endpoint,
-  url: [host: "am.resertech.com", port: 80],
-  http: [port: 80],
-  force_ssl: [hsts: true],
-  https: [
-  port: 443,
-  otp_app: :web_acc,
-  keyfile: "/etc/letsencrypt/live/am.resertech.com/privkey.pem",
-  cacertfile: "/etc/letsencrypt/live/am.resertech.com/fullchain.pem",
-  certfile: "/etc/letsencrypt/live/am.resertech.com/cert.pem"],
-  check_origin: ["https://am.resertech.com"]
-# end new host
 config :logger, level: :info
 
 # ## SSL Support
@@ -67,7 +55,7 @@ config :logger, level: :info
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-# config :web_acc, WebAccWeb.Endpoint, server: true
+config :web_acc, WebAccWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.

@@ -35,7 +35,7 @@ defmodule WebAcc.MixProject do
     [
       {:phoenix, "~> 1.4.17",
        override: true, git: "https://github.com/yithanglee/damien_phoenix"},
-      {:red_potion, "~> 0.3.0", override: true, git: "https://github.com/yithanglee/red_potion"},
+      {:red_potion, "~> 0.4.3", override: true, git: "https://github.com/yithanglee/red_potion"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.0"},

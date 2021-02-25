@@ -3,12 +3,13 @@ defmodule WebAcc.ReleaseTasks do
     :crypto,
     :ssl,
     :postgrex,
-    :ecto
+    :ecto,
+    :ecto_sql
   ]
-  def repos, do: Application.get_env(:web_acc , :ecto_repos, [])
+  def repos, do: Application.get_env(:web_acc, :ecto_repos, [])
 
   def seed do
-    me = :web_acc 
+    me = :web_acc
 
     IO.puts("Loading #{me}..")
     # Load the code for myapp, but don't start it
@@ -20,7 +21,7 @@ defmodule WebAcc.ReleaseTasks do
 
     # Start the Repo(s) for myapp
     IO.puts("Starting repos..")
-    Enum.each(repos(), & &1.start_link(pool_size: 1))
+    Enum.each(repos(), & &1.start_link(pool_size: 2))
 
     # Run migrations
     migrate()

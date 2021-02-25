@@ -1,0 +1,272 @@
+<div class="tab-content tab-space tab-subcategories">
+  <div class="tab-pane active show" id="link10">
+    <div class="row dt">
+      <div class="col-lg-12" id="stock_transfer_masterDt">
+      </div>
+    </div>
+      <div class="row excel" style="display: none;">
+          <div class="col-lg-12" id="spreadsheet">
+            
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-warning" onclick="getExcelData()">Submit</div>
+          </div>
+          <div class="col-lg-1" >
+              <div class="btn btn-default" onclick="toggleExcel()">Back</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+   var stock_transfer_masterDataSources = {}
+  var product_entry = []
+
+  function addIntoStmData(params) {
+    console.log(params);
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    var data = table.data()[params.index]
+
+    function call() {
+      var added = $(product_entry).filter((i, v) => {
+        return v.id == data.id;
+      })
+      if (added.length == 0) {
+        product_entry.push({
+          ...data,
+          ...{
+            quantity: 1
+          }
+        })
+      } else {
+        $(added)[0].quantity += 1
+      }
+      // product_entry.push(data )
+      console.log(product_entry)
+      $("#add_result").html("")
+      $(product_entry).each((i, v) => {
+        var tr =
+          `
+      <tr>
+      <td>` + v.id + `</td>
+      <td>` + v.name + `</td>
+      <td>` + v.sku + `</td>
+      <td>` + v.quantity + `</td>
+      </tr>
+      `
+        $("#add_result").append(tr)
+      })
+    }
+    call();
+  }
+  productSource = new dataSource("products", {}, null, [{
+      "label": "Sku",
+      "data": "sku"
+    },
+    {
+      "label": "Name",
+      "data": "name"
+    },
+    {
+      "label": "Short desc",
+      "data": "short_desc"
+    },
+    {
+      "label": "Action",
+      "data": "id"
+    }
+  ], "#Products", [], [], "Product", [{
+    iconName: "add",
+    color: "rose",
+    onClickFunction: addIntoStmData,
+    fnParams: {}
+  }]);
+
+  function addProductData(params) {
+    var dt = params.dataSource;
+    var table = $(dt.tableSelector).DataTable();
+    // the dataTable will populate the index and row.
+    var r = table.row(params.row);
+    var preferedLink;
+    if (params.link != null) {
+      preferedLink = params.link;
+    } else {
+      preferedLink = dt.link;
+    }
+    product_entry = []
+    var stm_id = table.data()[params.index].id;
+
+    function call() {
+      var jj =
+        `<h3>Add products to transfer</h3>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header" >Products</div>
+              <div class="card-body">
+              <table id="Products" style="width: 100%;">
+              <thead></thead>
+              <tbody></tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">Products to be transfered</div>
+              <div class="card-body">
+              <table class="table" >
+              <thead><tr>
+              <th>id</th> 
+              <th>name </th>
+              <th>sku </th>
+              <th>qty</th>
+              </tr></thead>
+              <tbody id="add_result"></tbody>
+              </table>
+              </div>
+              <div class="card-footer">
+                <div class="btn btn-primary float-right update_tr">Update Transfer Note</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      `;
+      r.child(jj).show();
+      productSource.table = populateTable(productSource)
+
+      $(".update_tr").click(() => {
+        $(product_entry).each((i, v) => {
+          v.product_id = v.id
+          v.product_name = v.name
+          delete v["id"]
+          $.ajax({
+            url: "/api/stock_transfers",
+            dataType: "json",
+            method: "POST",
+            data: {
+              stock_transfers: {
+                ...v,
+                ...{
+                  id: 0,
+                  stm_id: stm_id
+                }
+              }
+            }
+          }).done(function() {})
+        })
+        r.child.hide();
+        $.notify({
+          icon: "add_alert",
+          message: "Updated!"
+        }, {
+          type: "success",
+          timer: 1000,
+          placement: {
+            from: "top",
+            align: "center"
+          }
+        });
+        // console.log(product_entry) 
+        // create the product order with pom_id 
+        // delete all the po entries in pom
+      })
+    }
+    if (r.child.isShown()) {
+      if (gParent == r) {
+        r.child.hide();
+      } else {
+        gParent = r;
+        call();
+      }
+    } else {
+      table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+        this.child.hide();
+      });
+      gParent = r;
+      call();
+    }
+  }
+
+
+    stock_transferSource = new dataSource("stock_transfers", {}, null, [
+    {"label": "Stm" , "data": "stm_id"},
+    {"label": "Product" , "data": "product_id"},
+    {"label": "Product name" , "data": "product_name"},
+    {"label": "Quantity" , "data": "quantity"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], "#subTable", [], [], "StockTransfer", [{
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        
+      }
+    }] );
+  
+  locationSource = new dataSource("locations", {}, null, [], null, [], [], "Location", []);
+  getTableData(locationSource)
+
+  var stmCols = [
+  'delivery_date',
+  {label: 'from_id', selection: locationSource.allData},
+  {label: 'to_id', selection: locationSource.allData},
+  'id',
+  {label: 'status', selection: ['Initial', 'Packing', 'Done']},
+  ]
+    stock_transfer_masterSource = new dataSource("stock_transfer_master", {}, stmCols, [
+    {"label": "id" , "data": "id"},
+    {"label": "From" , "data": "from_id"},
+    {"label": "From" , "data": "from"},
+    {"label": "To" , "data": "to_id"},
+    {"label": "To" , "data": "to"},
+    {"label": "Delivery date" , "data": "delivery_date"},
+    {"label": "Status" , "data": "status"},
+    
+    {"label": "Action", "data": "id"}
+
+    ], null, [], [], "StockTransferMaster", [
+ {
+      iconName: "list",
+      color: "info",
+      onClickFunction: showAssocData,
+      fnParams: {
+        title: "Transfer Products",
+        customCols: null,
+        extraParams: [{
+          parent: "id",
+          child: "stm_id"
+        }],
+        subSource: stock_transferSource
+      }
+    },
+    {
+      iconName: "add",
+      color: "warning",
+      onClickFunction: addProductData,
+      fnParams: {}
+    },
+
+    {
+      iconName: "create",
+      color: "warning",
+      onClickFunction: editData,
+      fnParams: {
+        customCols: stmCols
+
+        
+      }
+    }] );
+  
+    stock_transfer_masterDataSources["stock_transfers"] = stock_transferSource
+    stock_transfer_masterDataSources["stock_transfer_master"] = stock_transfer_masterSource
+
+  var dts = new dtSource(stock_transfer_masterDataSources);
+  dts.populateTables("#stock_transfer_masterDt", "Stock transfer master Management")
+</script>

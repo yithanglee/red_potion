@@ -23,7 +23,9 @@ defmodule WebAccWeb.StockLevelController do
             on: p.id == a.product_id,
             left_join: l in Settings.Location,
             on: l.id == a.location_id,
-            where: ilike(p.name, ^"%#{params["search"]["value"]}%")
+            where:
+              ilike(p.name, ^"%#{params["search"]["value"]}%") or
+                ilike(l.name, ^"%#{params["search"]["value"]}%")
           )
         )
 
@@ -35,7 +37,9 @@ defmodule WebAccWeb.StockLevelController do
             on: p.id == a.product_id,
             left_join: l in Settings.Location,
             on: l.id == a.location_id,
-            where: ilike(p.name, ^"%#{params["search"]["value"]}%"),
+            where:
+              ilike(p.name, ^"%#{params["search"]["value"]}%") or
+                ilike(l.name, ^"%#{params["search"]["value"]}%"),
             select: %{
               id: a.id,
               available: a.available,

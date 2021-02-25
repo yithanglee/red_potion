@@ -1,0 +1,28 @@
+<h1>Show Stock transfer</h1>
+
+<ul>
+
+  <li>
+    <strong>Stm:</strong>
+    <%= @stock_transfer.stm_id %>
+  </li>
+
+  <li>
+    <strong>Product:</strong>
+    <%= @stock_transfer.product_id %>
+  </li>
+
+  <li>
+    <strong>Product name:</strong>
+    <%= @stock_transfer.product_name %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @stock_transfer.quantity %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_transfer_path(@conn, :edit, @stock_transfer) %></span>
+<span><%= link "Back", to: Routes.stock_transfer_path(@conn, :index) %></span>

@@ -14,7 +14,7 @@ defmodule WebAccWeb.Endpoint do
     at: "/",
     from: :web_acc,
     gzip: false,
-    only: ~w(css fonts images frontend mobile img js favicon.ico robots.txt .well-known)
+    only: ~w(css fonts images frontend mobile img js favicon.ico robots.txt .well-known .well-known .well-known)
   )
 
   # Code reloading can be explicitly enabled under the

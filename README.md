@@ -33,3 +33,18 @@ warehouse management - similar to swc
 
 [] create a stock order request - list all the stock that needs to be order
 [] stock order request - all the PO is inside this SOR
+
+
+ERD
+
+product has one barcode
+
+product has many serial number - because manufacturer can give honor warranty 
+
+stock level (aka inventory) has many stock movement - to justify current onhand
+
+serial number has many stock movement
+
+stock movement has one serial number
+
+ 

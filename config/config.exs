@@ -32,8 +32,8 @@ import_config "#{Mix.env()}.exs"
 config :red_potion, :project, %{name: "WebAcc", alias_name: "web_acc", vsn: "0.1.0"}
 
 config :red_potion, :server, %{
-  url: "139.99.80.161",
+  url: "139.162.29.108",
   username: "ubuntu",
-  key: "resertech@snael1",
-  domain_name: "am.resertech.com"
+  key: System.get_env("SERVER_KEY"),
+  domain_name: "damienslab.ga"
 }

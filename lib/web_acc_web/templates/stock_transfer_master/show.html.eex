@@ -1,0 +1,28 @@
+<h1>Show Stock transfer master</h1>
+
+<ul>
+
+  <li>
+    <strong>From:</strong>
+    <%= @stock_transfer_master.from_id %>
+  </li>
+
+  <li>
+    <strong>To:</strong>
+    <%= @stock_transfer_master.to_id %>
+  </li>
+
+  <li>
+    <strong>Delivery date:</strong>
+    <%= @stock_transfer_master.delivery_date %>
+  </li>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @stock_transfer_master.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.stock_transfer_master_path(@conn, :edit, @stock_transfer_master) %></span>
+<span><%= link "Back", to: Routes.stock_transfer_master_path(@conn, :index) %></span>

@@ -1306,4 +1306,134 @@ defmodule WebAcc.SettingsTest do
       assert %Ecto.Changeset{} = Settings.change_customer(customer)
     end
   end
+
+  describe "stock_transfer_master" do
+    alias WebAcc.Settings.StockTransferMaster
+
+    @valid_attrs %{delivery_date: ~D[2010-04-17], from_id: 42, status: "some status", to_id: 42}
+    @update_attrs %{delivery_date: ~D[2011-05-18], from_id: 43, status: "some updated status", to_id: 43}
+    @invalid_attrs %{delivery_date: nil, from_id: nil, status: nil, to_id: nil}
+
+    def stock_transfer_master_fixture(attrs \\ %{}) do
+      {:ok, stock_transfer_master} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Settings.create_stock_transfer_master()
+
+      stock_transfer_master
+    end
+
+    test "list_stock_transfer_master/0 returns all stock_transfer_master" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert Settings.list_stock_transfer_master() == [stock_transfer_master]
+    end
+
+    test "get_stock_transfer_master!/1 returns the stock_transfer_master with given id" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert Settings.get_stock_transfer_master!(stock_transfer_master.id) == stock_transfer_master
+    end
+
+    test "create_stock_transfer_master/1 with valid data creates a stock_transfer_master" do
+      assert {:ok, %StockTransferMaster{} = stock_transfer_master} = Settings.create_stock_transfer_master(@valid_attrs)
+      assert stock_transfer_master.delivery_date == ~D[2010-04-17]
+      assert stock_transfer_master.from_id == 42
+      assert stock_transfer_master.status == "some status"
+      assert stock_transfer_master.to_id == 42
+    end
+
+    test "create_stock_transfer_master/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Settings.create_stock_transfer_master(@invalid_attrs)
+    end
+
+    test "update_stock_transfer_master/2 with valid data updates the stock_transfer_master" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert {:ok, %StockTransferMaster{} = stock_transfer_master} = Settings.update_stock_transfer_master(stock_transfer_master, @update_attrs)
+      assert stock_transfer_master.delivery_date == ~D[2011-05-18]
+      assert stock_transfer_master.from_id == 43
+      assert stock_transfer_master.status == "some updated status"
+      assert stock_transfer_master.to_id == 43
+    end
+
+    test "update_stock_transfer_master/2 with invalid data returns error changeset" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert {:error, %Ecto.Changeset{}} = Settings.update_stock_transfer_master(stock_transfer_master, @invalid_attrs)
+      assert stock_transfer_master == Settings.get_stock_transfer_master!(stock_transfer_master.id)
+    end
+
+    test "delete_stock_transfer_master/1 deletes the stock_transfer_master" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert {:ok, %StockTransferMaster{}} = Settings.delete_stock_transfer_master(stock_transfer_master)
+      assert_raise Ecto.NoResultsError, fn -> Settings.get_stock_transfer_master!(stock_transfer_master.id) end
+    end
+
+    test "change_stock_transfer_master/1 returns a stock_transfer_master changeset" do
+      stock_transfer_master = stock_transfer_master_fixture()
+      assert %Ecto.Changeset{} = Settings.change_stock_transfer_master(stock_transfer_master)
+    end
+  end
+
+  describe "stock_transfers" do
+    alias WebAcc.Settings.StockTransfer
+
+    @valid_attrs %{product_id: 42, product_name: "some product_name", quantity: 120.5, stm_id: 42}
+    @update_attrs %{product_id: 43, product_name: "some updated product_name", quantity: 456.7, stm_id: 43}
+    @invalid_attrs %{product_id: nil, product_name: nil, quantity: nil, stm_id: nil}
+
+    def stock_transfer_fixture(attrs \\ %{}) do
+      {:ok, stock_transfer} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Settings.create_stock_transfer()
+
+      stock_transfer
+    end
+
+    test "list_stock_transfers/0 returns all stock_transfers" do
+      stock_transfer = stock_transfer_fixture()
+      assert Settings.list_stock_transfers() == [stock_transfer]
+    end
+
+    test "get_stock_transfer!/1 returns the stock_transfer with given id" do
+      stock_transfer = stock_transfer_fixture()
+      assert Settings.get_stock_transfer!(stock_transfer.id) == stock_transfer
+    end
+
+    test "create_stock_transfer/1 with valid data creates a stock_transfer" do
+      assert {:ok, %StockTransfer{} = stock_transfer} = Settings.create_stock_transfer(@valid_attrs)
+      assert stock_transfer.product_id == 42
+      assert stock_transfer.product_name == "some product_name"
+      assert stock_transfer.quantity == 120.5
+      assert stock_transfer.stm_id == 42
+    end
+
+    test "create_stock_transfer/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Settings.create_stock_transfer(@invalid_attrs)
+    end
+
+    test "update_stock_transfer/2 with valid data updates the stock_transfer" do
+      stock_transfer = stock_transfer_fixture()
+      assert {:ok, %StockTransfer{} = stock_transfer} = Settings.update_stock_transfer(stock_transfer, @update_attrs)
+      assert stock_transfer.product_id == 43
+      assert stock_transfer.product_name == "some updated product_name"
+      assert stock_transfer.quantity == 456.7
+      assert stock_transfer.stm_id == 43
+    end
+
+    test "update_stock_transfer/2 with invalid data returns error changeset" do
+      stock_transfer = stock_transfer_fixture()
+      assert {:error, %Ecto.Changeset{}} = Settings.update_stock_transfer(stock_transfer, @invalid_attrs)
+      assert stock_transfer == Settings.get_stock_transfer!(stock_transfer.id)
+    end
+
+    test "delete_stock_transfer/1 deletes the stock_transfer" do
+      stock_transfer = stock_transfer_fixture()
+      assert {:ok, %StockTransfer{}} = Settings.delete_stock_transfer(stock_transfer)
+      assert_raise Ecto.NoResultsError, fn -> Settings.get_stock_transfer!(stock_transfer.id) end
+    end
+
+    test "change_stock_transfer/1 returns a stock_transfer changeset" do
+      stock_transfer = stock_transfer_fixture()
+      assert %Ecto.Changeset{} = Settings.change_stock_transfer(stock_transfer)
+    end
+  end
 end
