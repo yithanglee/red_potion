@@ -106,7 +106,7 @@ defmodule Mix.Tasks.Rel do
 
       result =
         Porcelain.shell(
-          "DATABASE_URL=ecto://postgress:postgres@#{server.url}/#{project.alias_name}_prod SECRET_KEY_BASE=#{
+          "DATABASE_URL=ecto://postgres:postgres@#{server.db_url}/#{project.alias_name}_prod SECRET_KEY_BASE=#{
             oo
           } MIX_ENV=prod mix distillery.release"
         )
@@ -125,15 +125,15 @@ defmodule Mix.Tasks.Rel do
           File.write(
             project_sh,
             ~s(#!/bin/sh
-cd /#{project.alias_name}
-echo #{server.key} | sudo -S tar xfz #{project.alias_name}.tar.gz
-sudo mv /#{project.alias_name}/#{project.alias_name}.tar.gz /#{project.alias_name}/releases/#{
+            cd /#{project.alias_name}
+            echo #{server.key} | sudo -S tar xfz #{project.alias_name}.tar.gz
+            sudo mv /#{project.alias_name}/#{project.alias_name}.tar.gz /#{project.alias_name}/releases/#{
               project.vsn
             }/
-sudo /#{project.alias_name}/bin/#{project.alias_name} stop
-sudo /#{project.alias_name}/bin/#{project.alias_name} migrate
-sudo /#{project.alias_name}/bin/#{project.alias_name} start
-)
+            sudo /#{project.alias_name}/bin/#{project.alias_name} stop
+            sudo /#{project.alias_name}/bin/#{project.alias_name} migrate
+            sudo /#{project.alias_name}/bin/#{project.alias_name} start
+            )
           )
 
         IO.inspect(a)

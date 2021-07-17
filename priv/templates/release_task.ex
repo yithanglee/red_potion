@@ -3,7 +3,8 @@ defmodule <%= project.name %>.ReleaseTasks do
     :crypto,
     :ssl,
     :postgrex,
-    :ecto
+    :ecto,
+    :ecto_sql
   ]
   def repos, do: Application.get_env(<%= inspect String.to_atom(project.alias_name ) %> , :ecto_repos, [])
 
@@ -20,7 +21,7 @@ defmodule <%= project.name %>.ReleaseTasks do
 
     # Start the Repo(s) for myapp
     IO.puts("Starting repos..")
-    Enum.each(repos(), & &1.start_link(pool_size: 1))
+    Enum.each(repos(), & &1.start_link(pool_size: 4))
 
     # Run migrations
     migrate()
